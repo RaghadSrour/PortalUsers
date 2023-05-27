@@ -59,12 +59,6 @@ if (mysqli_num_rows($result) == 1) {
     }
     
 } 
-// else {
-//         // Invalid credentials, display an error message
-//         $login_error = "Invalid username or password";
-//     }
-
-
 
     mysqli_close($conn);
 }
