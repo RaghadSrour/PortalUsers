@@ -77,5 +77,5 @@ if (!$conn) {
     </table>
 </body>
 </html>
-
+<?php include 'footer.php'; ?>
 
