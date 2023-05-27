@@ -1,11 +1,4 @@
 <?php
-// session_start();
-
-// // Check if the user is not logged in
-// if (!isset($_SESSION['user_id'])) {
-//     header("Location: login.php");
-//     exit();
-// }
 
 // Establish database connection
 $host = "localhost";
@@ -18,6 +11,7 @@ $conn = mysqli_connect($host, $username, $password, $dbname);
 if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -48,8 +42,12 @@ if (!$conn) {
             <th>Actions</th>
         </tr>
         <?php
+   
+        
+     
+        
         // Fetch users from the database
-        $sql = 'SELECT * FROM users';
+        $sql = 'SELECT * FROM users WHERE role = "2" ';
         $result = mysqli_query($conn, $sql);
 
         if (mysqli_num_rows($result) > 0) {
@@ -71,11 +69,14 @@ if (!$conn) {
             echo '<tr><td colspan="6">No users found</td></tr>';
         }
 
+   
+
         // Close the database connection
         mysqli_close($conn);
         ?>
     </table>
 </body>
 </html>
-<?php include 'footer.php'; ?>
 
+
+<?php include 'footer.php'; ?>
