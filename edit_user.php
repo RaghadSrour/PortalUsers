@@ -1,10 +1,4 @@
 <?php
-// Check if the user is logged in and has admin role
-// session_start();
-// if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] != '1') {
-//     header("Location: login.php");
-//     exit();
-// }
 
 // Check if the user ID is provided in the URL
 if (!isset($_GET['id'])) {
@@ -19,6 +13,39 @@ $userID = $_GET['id'];
 $db = new mysqli('localhost', 'root', '', 'project');
 if ($db->connect_error) {
     die('Connection failed: ' . $db->connect_error);
+}
+
+// Check if the form is submitted
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Get the user information from the form
+    $userID = $_POST['id'];
+    $username = $_POST['username'];
+    $email = $_POST['email'];
+
+    // Prepare the SQL statement with placeholders
+    $sql = "UPDATE users SET username = ?, email = ? WHERE id = ?";
+
+    // Prepare the statement
+    $stmt = $db->prepare($sql);
+    if (!$stmt) {
+        die('Error preparing statement: ' . $db->error);
+    }
+
+    // Bind the parameters
+    $stmt->bind_param('ssi', $username, $email, $userID);
+
+    // Execute the statement
+    $result = $stmt->execute();
+    if ($result) {
+        // Redirect to the user list page
+        header("Location: users.php");
+        exit();
+    } else {
+        echo 'Error updating user.';
+    }
+
+    // Close the statement
+    $stmt->close();
 }
 
 // Prepare the SQL statement with a placeholder
@@ -46,7 +73,7 @@ if ($resultSet->num_rows == 1) {
     $row = $resultSet->fetch_assoc();
     // Display the form to edit user data
     echo '<h1>Edit User</h1>';
-    echo '<form method="POST" action="edit_user.php">';
+    echo '<form method="POST" action="">';
     echo '<input type="hidden" name="id" value="' . $row['id'] . '">';
     echo '<input type="text" name="username" placeholder="Username" value="' . $row['username'] . '" required><br>';
     echo '<input type="email" name="email" placeholder="Email" value="' . $row['email'] . '" required><br>';
