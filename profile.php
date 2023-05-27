@@ -1,52 +1,22 @@
 <?php
+
 // Check if the user is logged in
-session_start();
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
-    exit();
+    exit;
 }
 
-// Get the user ID from the session
-$userID = $_SESSION['user_id'];
+// Get the user data from the database
+$user_data = mysqli_query($db, "SELECT * FROM users WHERE id = $_SESSION[user_id]");
 
-// Connect to the database
-$db = new mysqli('localhost', 'root', '', 'project');
-if ($db->connect_error) {
-    die('Connection failed: ' . $db->connect_error);
-}
-
-// Prepare the SQL statement with a placeholder
-$sql = "SELECT * FROM users WHERE id = ? LIMIT 1";
-
-// Prepare the statement
-$stmt = $db->prepare($sql);
-if (!$stmt) {
-    die('Error preparing statement: ' . $db->error);
-}
-
-// Bind the parameter
-$stmt->bind_param('i', $userID);
-
-// Execute the statement
-$result = $stmt->execute();
-if (!$result) {
-    die('Error executing statement: ' . $stmt->error);
-}
-
-// Get the result set
-$resultSet = $stmt->get_result();
-
-if ($resultSet->num_rows == 1) {
-    $row = $resultSet->fetch_assoc();
-    // Display the user profile data
-    echo '<h1>User Profile</h1>';
-    echo '<p>Username: ' . $row['username'] . '</p>';
-    echo '<p>Email: ' . $row['email'] . '</p>';
-    // Add more user data as needed
-
+// Check if the user data was retrieved successfully
+if ($user_data) {
+    $user = mysqli_fetch_assoc($user_data);
 } else {
-    echo "Failed to fetch user information.";
+    echo "Error retrieving user data";
+    exit;
 }
+
 
 // Close the statement and database connection
 $stmt->close();
@@ -59,3 +29,20 @@ include 'header.php';
 // Include the footer file
 include 'footer.php';
 ?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile Page</title>
+</head>
+<body>
+    <h1>Profile Page</h1>
+    <p>Here is the data of the person who is currently logged in:</p>
+    <ul>
+        <li>Name: <?php echo $user['name']; ?></li>
+        <li>Email: <?php echo $user['email']; ?></li>
+        <li>Role: <?php echo $user['role']; ?></li>
+
+    </ul>
+</body>
+</html>
